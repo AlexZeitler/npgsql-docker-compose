@@ -27,6 +27,10 @@
       <Content Include="Resources\docker-compose.yml">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </Content>
+      <None Remove="xunit.runner.json" />
+      <Content Include="xunit.runner.json">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
     </ItemGroup>
 
 </Project>
