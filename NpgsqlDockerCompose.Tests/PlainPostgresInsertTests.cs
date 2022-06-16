@@ -34,6 +34,9 @@ public class PlainPostgresInsertTests
     var connectionString =
       "PORT = 5432; HOST = localhost; TIMEOUT = 15; POOLING = True; COMMANDTIMEOUT = 20; DATABASE = 'postgres'; PASSWORD = '123456'; USER ID = 'postgres'";
     await using var connection = new NpgsqlConnection(connectionString);
+
+    await WaitForPostgres.WaitForConnection(connectionString);
+
     await connection.OpenAsync();
 
     var dropTableCommand = new NpgsqlCommand(
@@ -60,10 +63,18 @@ public class PlainPostgresInsertTests
     };
 
     await cmd.ExecuteNonQueryAsync();
-    
+
+    await using var query = new NpgsqlCommand("SELECT * FROM test", connection);
+    var reader = await query.ExecuteReaderAsync();
+    Assert.True(reader.HasRows);
+
+    reader.Read();
+    Assert.Equal("some_value", reader["col1"].ToString());
+
+
     await connection.CloseAsync();
     NpgsqlConnection.ClearAllPools();
-    
+
     service.Stop();
     service.Remove();
   }
@@ -93,6 +104,8 @@ public class PlainPostgresInsertTests
     var connectionString =
       "PORT = 5432; HOST = localhost; TIMEOUT = 15; POOLING = True; COMMANDTIMEOUT = 20; DATABASE = 'postgres'; PASSWORD = '123456'; USER ID = 'postgres'";
     await using var connection = new NpgsqlConnection(connectionString);
+
+    await WaitForPostgres.WaitForConnection(connectionString);
     await connection.OpenAsync();
 
     var dropTableCommand = new NpgsqlCommand(
@@ -120,10 +133,18 @@ public class PlainPostgresInsertTests
     };
 
     await cmd.ExecuteNonQueryAsync();
-    
+
+    await using var query = new NpgsqlCommand("SELECT * FROM test", connection);
+    var reader = await query.ExecuteReaderAsync();
+    Assert.True(reader.HasRows);
+
+    reader.Read();
+    Assert.Equal("some_value", reader["col1"].ToString());
+
+
     await connection.CloseAsync();
     NpgsqlConnection.ClearAllPools();
-    
+
     service.Stop();
     service.Remove();
   }
